@@ -18,6 +18,16 @@ class UFloat(Variable):
         else:
             raise ValueError("must be a str or a ufloat")
 
+    @classmethod
+    def __modify_schema__(cls, field_schema):
+        field_schema["type"] = "string"
+        field_schema["description"] = (
+            "If no uncertainty is specified, assumes +- 1 on the last digit. "
+            "See <https://pythonhosted.org/uncertainties/user_guide.html#creating-numbers-with-uncertainties> for more."
+        )
+        field_schema["pattern"] = r"^((?:(\d\.*)+(?:\+\/\-|±)(\d\.*)+)|(?:(\d\.*)+(?:\((\d\.*)+\))?))$"
+        # Technically the library can parse lots more regex forms, but this keeps it simple
+
     # No-ops to make code completion more happy
     def __add__(self, other):
         return super().__add__(other)

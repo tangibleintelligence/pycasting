@@ -302,3 +302,4 @@ dmypy.json
 /scripts/output/
 /output/
 /notebooks/data/
+/generated/
