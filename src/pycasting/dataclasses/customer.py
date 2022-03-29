@@ -1,12 +1,12 @@
 """
-SaaS Budgeting objects.
+Details of customers (potential, etc.)
 """
 from datetime import timedelta
 from typing import List, Union, Dict
 
 from pydantic import BaseModel, Field
 
-from pycasting.modeling.misc import UFloat
+from pycasting.predicting.misc import UFloat
 
 
 class LeadStage(BaseModel):
@@ -23,7 +23,7 @@ class LeadConfig(BaseModel):
 
 
 class UsageModel(BaseModel):
-    """Models the usage amount of a customer over time."""
+    """Calls to corresponding function in predicting/usage.py"""
 
     name: str
     params: Dict[str, Union[float, str]]
@@ -33,5 +33,6 @@ class CustomerType(BaseModel):
     name: str
     monthly_fee: UFloat
     setup_fee: UFloat
-    usage_fee: UFloat
+    usage_fee: float
     usage_model: UsageModel
+    fraction_of_total_customers: float = Field(..., le=1, ge=0)
