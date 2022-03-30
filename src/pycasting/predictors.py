@@ -7,7 +7,7 @@ from typing import Dict, Callable, Optional, List
 
 from pydantic import BaseModel, Field
 
-from pycasting.dataclasses_actuals import Actuals
+from pycasting.dataclasses.actuals import Actuals
 from pycasting.misc import UFloat
 
 

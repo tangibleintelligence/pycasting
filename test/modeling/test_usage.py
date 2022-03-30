@@ -1,7 +1,7 @@
 """Tests usage modelling functions"""
 from datetime import timedelta, date, datetime
 
-from pycasting.dataclasses_actuals import Actuals
+from pycasting.dataclasses.actuals import Actuals
 from pycasting.misc import UFloat
 from pycasting.predictors import get_predictor, PredictorCategory, PredictedCompanyState
 
