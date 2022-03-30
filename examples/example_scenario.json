@@ -1,71 +1,116 @@
 {
-    "lead_config": {
-        "lead_quota_per_sales_rep": 40,
-        "stages": [
-            {
-                "name": "lead",
-                "duration": 10,
-                "conversion_rate": 0.5
-            },
-            {
-                "name": "demo",
-                "duration": 10,
-                "conversion_rate": 0.5
-            },
-            {
-                "name": "trial",
-                "duration": 20,
-                "conversion_rate": 0.7
-            }
-        ]
-    },
-    "customer_types": [
-        {
-            "name": "Small - Usage Based",
-            "setup_fee": "25000+/-5000",
-            "monthly_fee": "0",
-            "usage_fee": 0.05,
-            "usage_model": {
-                "name": "linear",
-                "params": {
-                    "rate_per_30_days": 0.2,
-                    "initial_usage": 60000
-                }
-            },
-            "fraction_of_total_customers": 0.8
-        },
-        {
-            "name": "Large - Usage Based",
-            "setup_fee": "40000+/-10000",
-            "monthly_fee": "0",
-            "usage_fee": 0.04,
-            "usage_model": {
-                "name": "linear",
-                "params": {
-                    "rate_per_30_days": 0.09,
-                    "initial_usage": 600000
-                }
-            },
-            "fraction_of_total_customers": 0.2
-        }
-    ],
-    "headcount": [
-        {
-            "name": "Leadership",
-            "salary": 50000,
-            "hire_model": {
-                "name": "constant",
-                "params": {
-                    "count": 3
-                }
-            }
-        },
-        {
-            "name": "Marketing Manager",
-            "salary": 80000,
-            "hire_model": {
-
-            }
-        }
+  "lead_config": {
+    "lead_quota_per_sales_rep": 40,
+    "stages": [
+      {
+        "name": "lead",
+        "duration": 10,
+        "conversion_rate": 0.5
+      },
+      {
+        "name": "demo",
+        "duration": 10,
+        "conversion_rate": 0.5
+      },
+      {
+        "name": "trial",
+        "duration": 20,
+        "conversion_rate": 0.7
+      }
     ]
+  },
+  "customer_types": [
+    {
+      "name": "Small - Usage Based",
+      "setup_fee": "25000+/-5000",
+      "monthly_fee": "0",
+      "usage_fee": 0.05,
+      "usage_predictor": {
+        "name": "linear",
+        "increase_per_year": "1+/-0.1",
+        "initial_usage": "60000+/-10000"
+      },
+      "fraction_of_total_customers": 0.8,
+      "cogs": {
+        "monthly": "350+/-50",
+        "per_usage": "0.005"
+      }
+    },
+    {
+      "name": "Large - Usage Based",
+      "setup_fee": "40000+/-10000",
+      "monthly_fee": "0",
+      "usage_fee": 0.03,
+      "usage_predictor": {
+        "name": "linear",
+        "increase_per_year": "1+/-0.2",
+        "initial_usage": "600000+/-100000"
+      },
+      "fraction_of_total_customers": 0.2,
+      "cogs": {
+        "monthly": "350+/-50",
+        "per_usage": "0.005"
+      }
+    }
+  ],
+  "headcount": [
+    {
+      "name": "Leadership",
+      "salary": 50000,
+      "hire_predictor": {
+        "name": "constant",
+        "count": 3
+      }
+    },
+    {
+      "name": "Marketing Lead",
+      "salary": 80000,
+      "hire_predictor": {
+        "name": "linear_with_max",
+        "initial_count": 1,
+        "hires_per_year": 1,
+        "first_hire_date": "2022-09-01",
+        "max_hires": 2
+      }
+    },
+    {
+      "name": "Lead Developer",
+      "salary": 120000,
+      "hire_predictor": {
+        "name": "linear_with_max",
+        "initial_count": 1,
+        "hires_per_year": 1,
+        "first_hire_date": "2022-10-01",
+        "max_hires": 3
+      }
+    },
+    {
+      "name": "Integration Developer",
+      "salary": 100000,
+      "hire_predictor": {
+        "name": "scale_with_customers",
+        "customers_per_person": 5
+      }
+    },
+    {
+      "name": "CSR",
+      "salary": 70000,
+      "hire_predictor": {
+        "name": "scale_with_customers",
+        "customers_per_person": 10
+      }
+    },
+    {
+      "name": "Sales Rep",
+      "salary": 45000,
+      "commission_percent": 0.05,
+      "hire_predictor": {
+        "name": "linear_with_max",
+        "initial_count": 3,
+        "first_hire_date": "2022-06-01",
+        "hires_per_year": 10,
+        "max_hires": 30
+      }
+    }
+  ]
 }

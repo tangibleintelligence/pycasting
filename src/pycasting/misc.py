@@ -1,25 +1,6 @@
-from datetime import timedelta, date
-from enum import Enum
-
 import pydantic.json
-from pydantic import BaseModel, Field
-from uncertainties.core import Variable, ufloat_fromstr
-
-from pycasting.dataclasses.scenario import Actuals
-
-
-class State(BaseModel):
-    """Contains current "state" at a future date. Passed into predictors to be used when modelling various aspects of the future"""
-
-    effective_date: date = Field(..., description="How far in the future we are")
-
-    number_of_customers: int = Field(..., description="Number of on-boarded customers at this point in time.")
-    actuals: Actuals = Field(..., description="Latest known actual information (financial, etc.)")
-
-
-class PredictorCategory(Enum):
-    usage = "usage"
-    headcount = "headcount"
+from uncertainties.core import Variable
+from uncertainties import ufloat_fromstr
 
 
 # noinspection PyUnresolvedReferences
