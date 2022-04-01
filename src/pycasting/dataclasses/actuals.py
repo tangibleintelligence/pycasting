@@ -5,7 +5,9 @@ Pydantic data objects used to represent reality.
 import warnings
 from datetime import datetime, date
 
-from pydantic import BaseModel, validator
+from pydantic import validator
+
+from pycasting.misc import BaseModel
 
 
 class Actuals(BaseModel):

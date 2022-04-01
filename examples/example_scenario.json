@@ -1,6 +1,5 @@
 {
   "lead_config": {
-    "lead_quota_per_sales_rep": 40,
     "stages": [
       {
         "name": "lead",
@@ -104,6 +103,8 @@
       "name": "Sales Rep",
       "salary": 45000,
       "commission_percent": 0.05,
+      "ramp_up_months": 4,
+      "monthly_quota": 40,
       "hire_predictor": {
         "name": "linear_with_max",
         "initial_count": 3,

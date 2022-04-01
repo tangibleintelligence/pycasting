@@ -5,10 +5,10 @@ import inspect
 from datetime import timedelta
 from typing import List, Dict, Union, Tuple
 
-from pydantic import BaseModel, Field, validator, create_model
+from pydantic import Field, validator, create_model
 
-from pycasting.misc import UFloat
-from pycasting.predictors import get_predictor_names, PredictorCategory, get_predictor
+from pycasting.misc import UFloat, BaseModel
+from pycasting.calc.predictors import get_predictor_names, PredictorCategory, get_predictor
 
 """
 Details of customers (potential, etc.)
@@ -24,7 +24,6 @@ class LeadStage(BaseModel):
 
 
 class LeadConfig(BaseModel):
-    lead_quota_per_sales_rep: int
     stages: List[LeadStage]
 
 
@@ -41,8 +40,8 @@ for predictor_category in PredictorCategory:
         param_mapping = {
             p.name: (p.annotation, ...)
             for p in parameters.values()
-            if (p.kind is inspect.Parameter.KEYWORD_ONLY)
-            or (p.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD and p.name not in ("state", "start"))
+            if (p.kind is inspect.Parameter.KEYWORD_ONLY or p.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD)
+            and (p.name not in ("state", "effective_date", "start"))
         }
         predictors.append(
             create_model(
@@ -85,6 +84,8 @@ class SalesRole(Role):
     """Extends `Role` to support commission compensation"""
 
     commission_percent: float = Field(..., ge=0, le=1)
+    ramp_up_months: int
+    monthly_quota: int
 
 
 """
@@ -105,6 +106,7 @@ CustomerType.update_forward_refs()
 
 
 class Scenario(BaseModel):
+
     lead_config: LeadConfig
     customer_types: List[CustomerType]
     headcount: List[Union[SalesRole, Role]]

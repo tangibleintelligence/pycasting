@@ -1,6 +1,10 @@
+from datetime import date
+
 import pydantic.json
-from uncertainties.core import Variable
+from dateutil.relativedelta import relativedelta
+from pydantic import Field, BaseModel as PydanticBaseModel
 from uncertainties import ufloat_fromstr
+from uncertainties.core import Variable
 
 
 # noinspection PyUnresolvedReferences
@@ -66,6 +70,39 @@ class UFloat(Variable):
 
     def __ge__(self, other):
         return super().__ge__(other)
+
+
+class BaseModel(PydanticBaseModel):
+    class Config:
+        frozen = True
+
+
+def end_of_month(d: date) -> date:
+    return d + relativedelta(day=-1)
+
+
+def is_end_of_month(d: date) -> bool:
+    return (d + relativedelta(days=1)).day == 1
+
+
+class MonthYear(BaseModel):
+    """Handles month-level data, and addition/subtraction"""
+
+    month: int = Field(..., ge=1, le=12)
+    year: int
+
+    @property
+    def start_of_month(self) -> date:
+        return date(self.year, self.month, 1)
+
+    @property
+    def end_of_month(self) -> date:
+        return end_of_month(self.start_of_month)
+
+    def shift_month(self, shift_amount: int) -> "MonthYear":
+        """Shifts months by shift_amount, wrapping around years, returning a new `MonthYear` object."""
+        new_start_of_month = self.start_of_month + relativedelta(months=shift_amount)
+        return MonthYear(month=new_start_of_month.month, year=new_start_of_month.year)
 
 
 pydantic.json.ENCODERS_BY_TYPE[Variable] = lambda v: str(v)
