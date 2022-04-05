@@ -24,7 +24,7 @@ class LeadStage(BaseModel):
 
 
 class LeadConfig(BaseModel):
-    stages: List[LeadStage]
+    stages: Tuple[LeadStage, ...]
 
 
 # dynamically build the possible usage models options
@@ -111,8 +111,8 @@ CustomerType.update_forward_refs()
 class Scenario(BaseModel):
 
     lead_config: LeadConfig
-    customer_types: List[CustomerType]
-    headcount: List[Union[SalesRole, Role]]
+    customer_types: Tuple[CustomerType, ...]
+    headcount: Tuple[Union[SalesRole, Role], ...]
     employee_costs: EmployeeCosts = EmployeeCosts()
 
     @validator("customer_types")

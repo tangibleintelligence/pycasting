@@ -1,9 +1,10 @@
 from datetime import date
 
 import pytest
+from uncertainties import ufloat
 
-from pycasting.dataclasses.predictions import SalesRole
-from pycasting.misc import BaseModel
+from pycasting.dataclasses.predictions import SalesRole, CustomerType, COGS
+from pycasting.misc import BaseModel, UFloat
 
 
 class SalespersonHirePredictor(BaseModel):
@@ -30,4 +31,33 @@ def salesperson_role(salesperson_hire_predictor) -> SalesRole:
         commission_percent=0.15,
         ramp_up_months=3,
         monthly_quota=40,
+    )
+
+
+class LinearUsagePredictor(BaseModel):
+    # Would be dynamically generated in code
+    # Based on linear growth
+    name: str = "linear"
+    initial_usage: UFloat = ufloat(1000, 100)
+    increase_per_year: UFloat = ufloat(1, 0.5)
+
+
+@pytest.fixture
+def linear_usage_predictor() -> LinearUsagePredictor:
+    return LinearUsagePredictor()
+
+
+@pytest.fixture
+def simple_customer_type(linear_usage_predictor) -> CustomerType:
+    return CustomerType(
+        name="general",
+        monthly_fee=ufloat(0, 0),
+        setup_fee=ufloat(10000, 0),
+        usage_fee=0.05,
+        usage_predictor=linear_usage_predictor,
+        fraction_of_total_customers=1,
+        cogs=COGS(
+            monthly=ufloat(0, 0),
+            per_usage=ufloat(0, 0),
+        ),
     )

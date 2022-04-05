@@ -29,17 +29,14 @@ def total_sales_quota(scenario: Scenario, month_year: MonthYear) -> float:
         ramp_up_months = sales_role.ramp_up_months
         effectiveness_increase_per_month = 1 / ramp_up_months
 
-        # Fully effective reps...who was hired by the start of the month ramp_up - 1 ago? (Because they would be considered fully ramped
-        # up by the end of this month_year.
-        effective_sales_reps += hires_through_effective_date(
-            month_year.shift_month(sales_role.ramp_up_months - 1).start_of_month, sales_role
-        )
+        # Fully effective reps...who was hired by the end of the month ramp_up ago? (Because they would be considered fully ramped
+        # up by this month_year.
+        effective_sales_reps += hires_through_effective_date(month_year.shift_month(-sales_role.ramp_up_months).end_of_month, sales_role)
 
-        # Less effective reps we need to add in one month at a time. We care about this month (0) up to ramp_up - 2. ramp_up - 1 months
-        # ago they are fully effective and we've already covered them.
-        for months_ago in range(0, ramp_up_months - 2):
+        # Less effective reps we need to add in one month at a time. We care about this month (0) up to ramp_up - 1.
+        for months_ago in range(0, ramp_up_months):
             # who was hired within the month `months_ago`?
-            num_hires = hires_in_month(month_year.shift_month(months_ago))
+            num_hires = hires_in_month(month_year.shift_month(-months_ago), sales_role)
             # Those folks are partially effective. They increase at a rate per month, including the month in question.
             effectiveness = effectiveness_increase_per_month * (1 + months_ago)
             # Add this cohort in
@@ -86,9 +83,9 @@ def new_transitions(scenario: Scenario, month_year: MonthYear, stage: LeadStage)
         # in slab). Ratio of those two sources is based on `days`. See slab page for full equation.
 
         # First get the number of transitions into stage 0 `months` ago and `months + 1` ago. Recursive!
-        transitions_per_day_months_ago = new_transitions(scenario, month_year.shift_month(months), scenario.lead_config.stages[0]) / 30
+        transitions_per_day_months_ago = new_transitions(scenario, month_year.shift_month(-months), scenario.lead_config.stages[0]) / 30
         transitions_per_day_months_plus_one_ago = (
-            new_transitions(scenario, month_year.shift_month(months + 1), scenario.lead_config.stages[0]) / 30
+            new_transitions(scenario, month_year.shift_month(-(months + 1)), scenario.lead_config.stages[0]) / 30
         )
 
         # Add in proportion
