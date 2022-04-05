@@ -35,7 +35,7 @@ class PredictedCompanyState(BaseModel):
 
     @property
     def effective_month_year(self) -> MonthYear:
-        return MonthYear(month=self.effective_date.month, year=self.effective_date.year)
+        return MonthYear.from_date(self.effective_date)
 
     # These aren't perfect because they don't adjust the number of customers. TODO need to determine if rework is needed.
     def with_effective_date(self, effective_date: date) -> "PredictedCompanyState":

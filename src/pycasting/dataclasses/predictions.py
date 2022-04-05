@@ -45,7 +45,10 @@ for predictor_category in PredictorCategory:
         }
         predictors.append(
             create_model(
-                f"{predictor_category.name}__Predictor__{predictor_name}", name=(str, Field(predictor_name, const=True)), **param_mapping
+                f"{predictor_category.name}__Predictor__{predictor_name}",
+                __config__=BaseModel.Config,
+                name=(str, Field(predictor_name, const=True)),
+                **param_mapping,
             )
         )
     predictor_pydantic_models[predictor_category] = tuple(predictors)

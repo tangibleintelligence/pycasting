@@ -2,7 +2,7 @@ from datetime import date
 
 import pydantic.json
 from dateutil.relativedelta import relativedelta
-from pydantic import Field, BaseModel as PydanticBaseModel
+from pydantic import Field, BaseModel as PydanticBaseModel, BaseConfig as PydanticBaseConfig
 from uncertainties import ufloat_fromstr
 from uncertainties.core import Variable
 
@@ -73,12 +73,12 @@ class UFloat(Variable):
 
 
 class BaseModel(PydanticBaseModel):
-    class Config:
+    class Config(PydanticBaseConfig):
         frozen = True
 
 
 def end_of_month(d: date) -> date:
-    return d + relativedelta(day=-1)
+    return d + relativedelta(day=1, months=1, days=-1)
 
 
 def is_end_of_month(d: date) -> bool:
@@ -103,6 +103,10 @@ class MonthYear(BaseModel):
         """Shifts months by shift_amount, wrapping around years, returning a new `MonthYear` object."""
         new_start_of_month = self.start_of_month + relativedelta(months=shift_amount)
         return MonthYear(month=new_start_of_month.month, year=new_start_of_month.year)
+
+    @classmethod
+    def from_date(cls, dt: date):
+        return cls(month=dt.month, year=dt.year)
 
 
 pydantic.json.ENCODERS_BY_TYPE[Variable] = lambda v: str(v)
