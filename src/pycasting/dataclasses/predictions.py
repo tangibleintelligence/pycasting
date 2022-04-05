@@ -62,6 +62,7 @@ class CustomerType(BaseModel):
     usage_predictor: Union[predictor_pydantic_models[PredictorCategory.usage]]
     fraction_of_total_customers: float = Field(..., le=1, ge=0)
     cogs: "COGS"
+    lead_config: LeadConfig
 
 
 """
@@ -110,7 +111,6 @@ CustomerType.update_forward_refs()
 
 class Scenario(BaseModel):
 
-    lead_config: LeadConfig
     customer_types: Tuple[CustomerType, ...]
     headcount: Tuple[Union[SalesRole, Role], ...]
     employee_costs: EmployeeCosts = EmployeeCosts()

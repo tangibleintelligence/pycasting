@@ -5,7 +5,7 @@ import math
 from functools import lru_cache
 
 from pycasting.calc.headcount import hires_through_effective_date, hires_in_month
-from pycasting.dataclasses.predictions import Scenario, LeadStage, SalesRole
+from pycasting.dataclasses.predictions import Scenario, LeadStage, SalesRole, CustomerType
 from pycasting.misc import MonthYear
 
 
@@ -50,15 +50,15 @@ def total_sales_quota(scenario: Scenario, month_year: MonthYear) -> float:
 
 
 @lru_cache
-def new_transitions(scenario: Scenario, month_year: MonthYear, stage: LeadStage) -> int:
+def new_transitions(scenario: Scenario, month_year: MonthYear, stage: LeadStage, customer_type: CustomerType) -> int:
     """
-    Predict the number of transitions into a given stage in a given month/year.
+    Predict the number of transitions into a given stage + customer type in a given month/year.
     """
 
     # This modelling is roughly based on the Senovo B2B SaaS Excel. I'm not confident that only including sales "effectiveness" on the
     # initial transition is a good idea, but that's how they do it so I'm going to replicate for the like-for-like transition.
 
-    if scenario.lead_config.stages[0] == stage:
+    if customer_type.lead_config.stages[0] == stage:
         # If we're at the first stage, the transitions into it are the lead quota per rep * number of "effective reps" for each sales role
         # type. An "effective rep" is based on how many reps are available, given that they ramp up over some period of time.
         return round(total_sales_quota(scenario, month_year))
@@ -66,8 +66,8 @@ def new_transitions(scenario: Scenario, month_year: MonthYear, stage: LeadStage)
         # See https://tangibleintelligence.slab.com/posts/sales-progression-logic-o1rjhcag for this logic. It's based on the Senovo
         # spreadsheet, but is a little more accurate.
 
-        current_stage_index = scenario.lead_config.stages.index(stage)
-        previous_stages = scenario.lead_config.stages[0:current_stage_index]
+        current_stage_index = customer_type.lead_config.stages.index(stage)
+        previous_stages = customer_type.lead_config.stages[0:current_stage_index]
 
         # How long has it been since stage 0? (Called Delta in the Slab page.)
         duration_since_stage_0 = math.floor(sum(s.duration.total_seconds() / 24 / 60 / 60 for s in previous_stages))
@@ -83,9 +83,11 @@ def new_transitions(scenario: Scenario, month_year: MonthYear, stage: LeadStage)
         # in slab). Ratio of those two sources is based on `days`. See slab page for full equation.
 
         # First get the number of transitions into stage 0 `months` ago and `months + 1` ago. Recursive!
-        transitions_per_day_months_ago = new_transitions(scenario, month_year.shift_month(-months), scenario.lead_config.stages[0]) / 30
+        transitions_per_day_months_ago = (
+            new_transitions(scenario, month_year.shift_month(-months), customer_type.lead_config.stages[0], customer_type) / 30
+        )
         transitions_per_day_months_plus_one_ago = (
-            new_transitions(scenario, month_year.shift_month(-(months + 1)), scenario.lead_config.stages[0]) / 30
+            new_transitions(scenario, month_year.shift_month(-(months + 1)), customer_type.lead_config.stages[0], customer_type) / 30
         )
 
         # Add in proportion

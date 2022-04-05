@@ -1,9 +1,9 @@
-from datetime import date
+from datetime import date, timedelta
 
 import pytest
 from uncertainties import ufloat
 
-from pycasting.dataclasses.predictions import SalesRole, CustomerType, COGS
+from pycasting.dataclasses.predictions import SalesRole, CustomerType, COGS, LeadStage, LeadConfig
 from pycasting.misc import BaseModel, UFloat
 
 
@@ -48,7 +48,27 @@ def linear_usage_predictor() -> LinearUsagePredictor:
 
 
 @pytest.fixture
-def simple_customer_type(linear_usage_predictor) -> CustomerType:
+def initial_lead_stage() -> LeadStage:
+    return LeadStage(name="initial", duration=timedelta(days=10), conversion_rate=0.75)
+
+
+@pytest.fixture
+def close_lead_stage() -> LeadStage:
+    return LeadStage(name="close", duration=timedelta(days=35), conversion_rate=0.5)
+
+
+@pytest.fixture
+def simple_lead_config(initial_lead_stage, close_lead_stage):
+    return LeadConfig(
+        stages=(
+            initial_lead_stage,
+            close_lead_stage,
+        )
+    )
+
+
+@pytest.fixture
+def simple_customer_type(linear_usage_predictor, simple_lead_config) -> CustomerType:
     return CustomerType(
         name="general",
         monthly_fee=ufloat(0, 0),
@@ -60,4 +80,5 @@ def simple_customer_type(linear_usage_predictor) -> CustomerType:
             monthly=ufloat(0, 0),
             per_usage=ufloat(0, 0),
         ),
+        lead_config=simple_lead_config,
     )
