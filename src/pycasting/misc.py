@@ -1,4 +1,6 @@
 from datetime import date
+from functools import total_ordering
+from typing import Any, Iterator
 
 import pydantic.json
 from dateutil.relativedelta import relativedelta
@@ -85,11 +87,20 @@ def is_end_of_month(d: date) -> bool:
     return (d + relativedelta(days=1)).day == 1
 
 
+@total_ordering
 class MonthYear(BaseModel):
     """Handles month-level data, and addition/subtraction"""
 
     month: int = Field(..., ge=1, le=12)
     year: int
+
+    def __eq__(self, other: Any) -> bool:
+        assert isinstance(other, MonthYear)
+        return self.year == other.year and self.month == other.month
+
+    def __lt__(self, other):
+        assert isinstance(other, MonthYear)
+        return self.start_of_month < other.start_of_month
 
     @property
     def start_of_month(self) -> date:
@@ -107,6 +118,16 @@ class MonthYear(BaseModel):
     @classmethod
     def from_date(cls, dt: date):
         return cls(month=dt.month, year=dt.year)
+
+    @classmethod
+    def between(cls, start: "MonthYear", end: "MonthYear", inclusive: bool = True) -> Iterator["MonthYear"]:
+        if inclusive is False:
+            end = end.shift_month(-1)
+
+        month_year = start
+        while month_year <= end:
+            yield month_year
+            month_year = month_year.shift_month(1)
 
 
 pydantic.json.ENCODERS_BY_TYPE[Variable] = lambda v: str(v)

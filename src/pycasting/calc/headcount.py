@@ -23,7 +23,7 @@ def hires_through_effective_date(effective_date: date, role: Role, state: Option
     dataclass = role.hire_predictor
     params = dataclass.dict(exclude={"name"})
 
-    return round(predict(PredictorCategory.headcount, dataclass.name, effective_date, params))
+    return round(predict(PredictorCategory.headcount, dataclass.name, effective_date, params, state=state))
 
 
 @lru_cache

@@ -9,7 +9,7 @@ from clearcut import get_logger
 from pydantic import Field, validator
 
 from pycasting.dataclasses.actuals import Actuals
-from pycasting.misc import UFloat, BaseModel, MonthYear, is_end_of_month, end_of_month
+from pycasting.misc import UFloat, BaseModel, is_end_of_month, end_of_month
 
 logger = get_logger(__name__)
 
@@ -20,33 +20,8 @@ class PredictedCompanyState(BaseModel):
     future
     """
 
-    effective_date: date = Field(..., description="How far in the future we are")
     number_of_customers: int = Field(..., description="Number of on-boarded customers at this point in time.")
     actuals: Actuals = Field(..., description="Latest known actual information (financial, etc.)")
-
-    @validator("effective_date")
-    def enforce_end_of_month(cls, v):
-        """Always use the end of the month as the effective date."""
-        if not is_end_of_month(v):
-            logger.warning(f"Coercing effective date to EOM: {v} -> {end_of_month(v)}")
-            return end_of_month(v)
-        else:
-            return v
-
-    @property
-    def effective_month_year(self) -> MonthYear:
-        return MonthYear.from_date(self.effective_date)
-
-    # These aren't perfect because they don't adjust the number of customers. TODO need to determine if rework is needed.
-    def with_effective_date(self, effective_date: date) -> "PredictedCompanyState":
-        return PredictedCompanyState(effective_date=effective_date, **self.dict(exclude={"effective_date"}))
-
-    def with_effective_month_year(self, month_year: MonthYear) -> "PredictedCompanyState":
-        return self.with_effective_date(month_year.end_of_month)
-
-    def with_shifted_month_year(self, shift_amount: int) -> "PredictedCompanyState":
-        """Convenience function that returns a new state with the effective date shifted by the given value."""
-        return self.with_effective_month_year(self.effective_month_year.shift_month(shift_amount))
 
 
 class PredictorCategory(Enum):

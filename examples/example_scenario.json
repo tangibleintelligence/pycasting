@@ -1,23 +1,5 @@
 {
-  "lead_config": {
-    "stages": [
-      {
-        "name": "lead",
-        "duration": 10,
-        "conversion_rate": 0.5
-      },
-      {
-        "name": "demo",
-        "duration": 10,
-        "conversion_rate": 0.5
-      },
-      {
-        "name": "trial",
-        "duration": 20,
-        "conversion_rate": 0.7
-      }
-    ]
-  },
+
   "customer_types": [
     {
       "name": "Small - Usage Based",
@@ -29,10 +11,29 @@
         "increase_per_year": "1+/-0.1",
         "initial_usage": "60000+/-10000"
       },
-      "fraction_of_total_customers": 0.8,
+      "fraction_of_leads": 0.8,
       "cogs": {
         "monthly": "350+/-50",
         "per_usage": "0.005"
+      },
+      "lead_config": {
+        "stages": [
+          {
+            "name": "lead",
+            "duration": 10,
+            "conversion_rate": 0.5
+          },
+          {
+            "name": "demo",
+            "duration": 10,
+            "conversion_rate": 0.5
+          },
+          {
+            "name": "trial",
+            "duration": 20,
+            "conversion_rate": 0.7
+          }
+        ]
       }
     },
     {
@@ -45,10 +46,29 @@
         "increase_per_year": "1+/-0.2",
         "initial_usage": "600000+/-100000"
       },
-      "fraction_of_total_customers": 0.2,
+      "fraction_of_leads": 0.2,
       "cogs": {
         "monthly": "350+/-50",
         "per_usage": "0.005"
+      },
+      "lead_config": {
+        "stages": [
+          {
+            "name": "lead",
+            "duration": 10,
+            "conversion_rate": 0.5
+          },
+          {
+            "name": "demo",
+            "duration": 10,
+            "conversion_rate": 0.5
+          },
+          {
+            "name": "trial",
+            "duration": 20,
+            "conversion_rate": 0.7
+          }
+        ]
       }
     }
   ],

@@ -3,12 +3,12 @@ Pydantic data objects used for prediction
 """
 import inspect
 from datetime import timedelta
-from typing import List, Dict, Union, Tuple
+from typing import Dict, Union, Tuple
 
 from pydantic import Field, validator, create_model
 
-from pycasting.misc import UFloat, BaseModel
 from pycasting.calc.predictors import get_predictor_names, PredictorCategory, get_predictor
+from pycasting.misc import UFloat, BaseModel
 
 """
 Details of customers (potential, etc.)
@@ -60,9 +60,10 @@ class CustomerType(BaseModel):
     setup_fee: UFloat
     usage_fee: float
     usage_predictor: Union[predictor_pydantic_models[PredictorCategory.usage]]
-    fraction_of_total_customers: float = Field(..., le=1, ge=0)
+    fraction_of_leads: float = Field(..., le=1, ge=0)
     cogs: "COGS"
     lead_config: LeadConfig
+    churn: float = Field(..., le=1, ge=0)
 
 
 """
@@ -117,7 +118,7 @@ class Scenario(BaseModel):
 
     @validator("customer_types")
     def customer_types_add_to_1(cls, v):
-        fracs = [getattr(x, "fraction_of_total_customers") for x in v]
+        fracs = [getattr(x, "fraction_of_leads") for x in v]
         if sum(fracs) != 1.0:
             raise ValueError(f"Total customer fractions must add to 1, not {sum(fracs)}")
 

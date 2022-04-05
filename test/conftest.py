@@ -3,6 +3,7 @@ from datetime import date, timedelta
 import pytest
 from uncertainties import ufloat
 
+from pycasting.dataclasses.actuals import Actuals
 from pycasting.dataclasses.predictions import SalesRole, CustomerType, COGS, LeadStage, LeadConfig
 from pycasting.misc import BaseModel, UFloat
 
@@ -15,6 +16,11 @@ class SalespersonHirePredictor(BaseModel):
     hires_per_year: int = 12
     first_hire_date: date = date(2025, 1, 1)
     max_hires: int = 10
+
+
+@pytest.fixture
+def actuals(simple_customer_type) -> Actuals:
+    return Actuals(accurate_as_of=date(2024, 12, 31), active_customers={simple_customer_type.name: 0})
 
 
 @pytest.fixture
@@ -75,10 +81,11 @@ def simple_customer_type(linear_usage_predictor, simple_lead_config) -> Customer
         setup_fee=ufloat(10000, 0),
         usage_fee=0.05,
         usage_predictor=linear_usage_predictor,
-        fraction_of_total_customers=1,
+        fraction_of_leads=1,
         cogs=COGS(
             monthly=ufloat(0, 0),
             per_usage=ufloat(0, 0),
         ),
         lead_config=simple_lead_config,
+        churn=0.5,
     )

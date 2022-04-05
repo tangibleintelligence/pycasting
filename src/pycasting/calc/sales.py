@@ -3,6 +3,7 @@ Sales forecasting logic. Predicting the future...ooooaaaaa
 """
 import math
 from functools import lru_cache
+from typing import Optional
 
 from pycasting.calc.headcount import hires_through_effective_date, hires_in_month
 from pycasting.dataclasses.predictions import Scenario, LeadStage, SalesRole, CustomerType
@@ -50,7 +51,7 @@ def total_sales_quota(scenario: Scenario, month_year: MonthYear) -> float:
 
 
 @lru_cache
-def new_transitions(scenario: Scenario, month_year: MonthYear, stage: LeadStage, customer_type: CustomerType) -> int:
+def new_transitions(scenario: Scenario, month_year: MonthYear, stage: Optional[LeadStage], customer_type: CustomerType) -> int:
     """
     Predict the number of transitions into a given stage + customer type in a given month/year.
     """
@@ -58,16 +59,18 @@ def new_transitions(scenario: Scenario, month_year: MonthYear, stage: LeadStage,
     # This modelling is roughly based on the Senovo B2B SaaS Excel. I'm not confident that only including sales "effectiveness" on the
     # initial transition is a good idea, but that's how they do it so I'm going to replicate for the like-for-like transition.
 
-    if customer_type.lead_config.stages[0] == stage:
+    if stage is not None and customer_type.lead_config.stages[0] == stage:
         # If we're at the first stage, the transitions into it are the lead quota per rep * number of "effective reps" for each sales role
         # type. An "effective rep" is based on how many reps are available, given that they ramp up over some period of time.
         return round(total_sales_quota(scenario, month_year))
     else:
         # See https://tangibleintelligence.slab.com/posts/sales-progression-logic-o1rjhcag for this logic. It's based on the Senovo
         # spreadsheet, but is a little more accurate.
-
-        current_stage_index = customer_type.lead_config.stages.index(stage)
-        previous_stages = customer_type.lead_config.stages[0:current_stage_index]
+        if stage is None:
+            previous_stages = customer_type.lead_config.stages
+        else:
+            current_stage_index = customer_type.lead_config.stages.index(stage)
+            previous_stages = customer_type.lead_config.stages[0:current_stage_index]
 
         # How long has it been since stage 0? (Called Delta in the Slab page.)
         duration_since_stage_0 = math.floor(sum(s.duration.total_seconds() / 24 / 60 / 60 for s in previous_stages))
