@@ -78,7 +78,7 @@ def simple_customer_type(linear_usage_predictor, simple_lead_config) -> Customer
     return CustomerType(
         name="general",
         monthly_fee=ufloat(0, 0),
-        setup_fee=ufloat(10000, 0),
+        setup_fee=ufloat(1, 0),
         usage_fee=0.05,
         usage_predictor=linear_usage_predictor,
         fraction_of_leads=1,
