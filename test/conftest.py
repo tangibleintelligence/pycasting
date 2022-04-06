@@ -3,8 +3,8 @@ from datetime import date, timedelta
 import pytest
 from uncertainties import ufloat
 
-from pycasting.dataclasses.actuals import Actuals
-from pycasting.dataclasses.predictions import SalesRole, CustomerType, COGS, LeadStage, LeadConfig, OtherSpend
+from pycasting.pydanticmodels.actuals import Actuals
+from pycasting.pydanticmodels.predictions import SalesRole, CustomerType, COGS, LeadStage, LeadConfig, OtherSpend
 from pycasting.misc import BaseModel, UFloat
 
 

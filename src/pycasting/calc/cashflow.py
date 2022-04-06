@@ -1,6 +1,7 @@
 """
 Cashflow calculations. Incoming, outgoing, reserves.
 """
+from functools import lru_cache
 from typing import Optional, Tuple
 
 from pycasting.calc.customers import new_customers, total_customers, customer_ages
@@ -8,16 +9,17 @@ from pycasting.calc.headcount import hires_through_effective_date
 from pycasting.calc.predictors import PredictedCompanyState
 from pycasting.calc.sales import new_transitions
 from pycasting.calc.usage import estimate_usage, estimate_total_usage
-from pycasting.dataclasses.actuals import Actuals
-from pycasting.dataclasses.predictions import CustomerType, Scenario
+from pycasting.pydanticmodels.actuals import Actuals
+from pycasting.pydanticmodels.predictions import CustomerType, Scenario
 from pycasting.misc import MonthYear, UFloat
 
 
-def monthly_income(scenario: Scenario, actuals: Actuals, effective_month_year: MonthYear, customer_type: Optional[CustomerType]) -> UFloat:
+@lru_cache
+def monthly_revenue(scenario: Scenario, actuals: Actuals, effective_month_year: MonthYear, customer_type: Optional[CustomerType]) -> UFloat:
     """Calculate income from given customer type (or all customers)"""
     income = UFloat(0, 0)
     if customer_type is None:
-        return sum(monthly_income(scenario, actuals, effective_month_year, ct) for ct in scenario.customer_types)
+        return sum(monthly_revenue(scenario, actuals, effective_month_year, ct) for ct in scenario.customer_types)
     else:
         # We'll be collecting a certain number of months behind
         effective_month_year = effective_month_year.shift_month(-customer_type.payment_months_behind)

@@ -1,7 +1,7 @@
 from clearcut import get_logger
 
 from pycasting.calc.customers import total_customers
-from pycasting.dataclasses.predictions import Scenario
+from pycasting.pydanticmodels.predictions import Scenario
 from pycasting.misc import MonthYear
 
 logger = get_logger(__name__)

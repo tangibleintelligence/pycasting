@@ -5,7 +5,7 @@ from pathlib import Path
 import typer
 from slugify import slugify
 
-from pycasting.dataclasses.predictions import Scenario
+from pycasting.pydanticmodels.predictions import Scenario
 
 
 def main(output_dir: Path = "generated/schema"):

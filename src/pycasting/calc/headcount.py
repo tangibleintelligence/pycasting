@@ -8,7 +8,7 @@ from typing import Optional
 from clearcut import get_logger
 
 from pycasting.calc.predictors import PredictedCompanyState, predict, PredictorCategory
-from pycasting.dataclasses.predictions import Role
+from pycasting.pydanticmodels.predictions import Role
 from pycasting.misc import MonthYear
 
 logger = get_logger(__name__)

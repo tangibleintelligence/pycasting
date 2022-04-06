@@ -37,28 +37,31 @@ class UFloat(Variable):
         # Technically the library can parse lots more regex forms, but this keeps it simple
 
     # No-ops to make code completion more happy
-    def __add__(self, other):
+    def __add__(self, other) -> "UFloat":
         return super().__add__(other)
 
-    def __radd__(self, other):
+    def __sub__(self, other) -> "UFloat":
+        return super().__sub__(other)
+
+    def __radd__(self, other) -> "UFloat":
         return super().__radd__(other)
 
-    def __mul__(self, other):
+    def __mul__(self, other) -> "UFloat":
         return super().__mul__(other)
 
-    def __rmul__(self, other):
+    def __rmul__(self, other) -> "UFloat":
         return super().__rmul__(other)
 
-    def __pow__(self, power, modulo=None):
+    def __pow__(self, power, modulo=None) -> "UFloat":
         return super().__pow__(power, modulo)
 
-    def __rpow__(self, other):
+    def __rpow__(self, other) -> "UFloat":
         return super().__rpow__(other)
 
-    def __truediv__(self, other):
+    def __truediv__(self, other) -> "UFloat":
         return super().__truediv__(other)
 
-    def __rtruediv__(self, other):
+    def __rtruediv__(self, other) -> "UFloat":
         return super().__rtruediv__(other)
 
     def __lt__(self, other):
@@ -93,6 +96,9 @@ class MonthYear(BaseModel):
 
     month: int = Field(..., ge=1, le=12)
     year: int
+
+    def __repr__(self):
+        return f"{self.month:2d}/{self.year:4d}"
 
     def __eq__(self, other: Any) -> bool:
         assert isinstance(other, MonthYear)

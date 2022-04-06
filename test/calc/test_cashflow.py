@@ -1,7 +1,7 @@
 from clearcut import get_logger
 
-from pycasting.calc.cashflow import monthly_income, monthly_expenses
-from pycasting.dataclasses.predictions import Scenario
+from pycasting.calc.cashflow import monthly_revenue, monthly_expenses
+from pycasting.pydanticmodels.predictions import Scenario
 from pycasting.misc import MonthYear
 
 logger = get_logger(__name__)
@@ -16,12 +16,12 @@ def test_monthly_income(simple_customer_type, salesperson_role, actuals):
         misc_bizdev_expenses=tuple(),
     )
 
-    assert monthly_income(scenario, actuals, MonthYear.from_date(actuals.accurate_as_of), simple_customer_type) == 0
+    assert monthly_revenue(scenario, actuals, MonthYear.from_date(actuals.accurate_as_of), simple_customer_type) == 0
 
     # Not asserting, just printing for sanity checks
     for shift in range(1, 12):
         logger.info(f"{shift} months in future:")
-        total = monthly_income(scenario, actuals, MonthYear.from_date(actuals.accurate_as_of).shift_month(shift), simple_customer_type)
+        total = monthly_revenue(scenario, actuals, MonthYear.from_date(actuals.accurate_as_of).shift_month(shift), simple_customer_type)
         logger.info(f"Total monthly income: {total}")
 
 

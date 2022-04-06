@@ -18,6 +18,7 @@ logger = get_logger(__name__)
 class Actuals(BaseModel):
     accurate_as_of: date = datetime.now().date()
     active_customers: Dict[str, int] = frozendict()
+    cash_on_hand: float
 
     @property
     def first_unknown_month_year(self) -> MonthYear:

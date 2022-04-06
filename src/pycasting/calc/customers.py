@@ -6,8 +6,8 @@ from functools import lru_cache
 from typing import Dict, Optional
 
 from pycasting.calc.sales import new_transitions
-from pycasting.dataclasses.actuals import Actuals
-from pycasting.dataclasses.predictions import Scenario, CustomerType
+from pycasting.pydanticmodels.actuals import Actuals
+from pycasting.pydanticmodels.predictions import Scenario, CustomerType
 from pycasting.misc import MonthYear
 
 
@@ -30,7 +30,7 @@ def total_customers(scenario: Scenario, actuals: Actuals, month_year: MonthYear,
         return sum(total_customers(scenario, actuals, month_year, ct) for ct in scenario.customer_types)
 
     if month_year < actuals.first_unknown_month_year:
-        return actuals.active_customers[customer_type.name]
+        return actuals.active_customers.get(customer_type.name, 0)
     else:
         return customer_ages(scenario, actuals, month_year, customer_type).total()
 

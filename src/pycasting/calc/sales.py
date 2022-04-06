@@ -6,7 +6,7 @@ from functools import lru_cache
 from typing import Optional
 
 from pycasting.calc.headcount import hires_through_effective_date, hires_in_month
-from pycasting.dataclasses.predictions import Scenario, LeadStage, SalesRole, CustomerType
+from pycasting.pydanticmodels.predictions import Scenario, LeadStage, SalesRole, CustomerType
 from pycasting.misc import MonthYear
 
 

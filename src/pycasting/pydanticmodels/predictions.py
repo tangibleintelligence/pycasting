@@ -86,8 +86,8 @@ class Role(BaseModel):
     name: str
     salary: float
     hire_predictor: Union[predictor_pydantic_models[PredictorCategory.headcount]]
-    customer_acquisition: bool
-    
+    customer_acquisition: bool = False
+
     @property
     def monthly_salary(self):
         return self.salary / 12
@@ -122,7 +122,7 @@ class OtherSpend(BaseModel):
     annual: Optional[float] = None
     monthly: Optional[float] = None
 
-    @root_validator
+    @root_validator(pre=True)
     def calculate_other_period(cls, values):
         if "annual" in values and "monthly" in values:
             return values
@@ -132,6 +132,8 @@ class OtherSpend(BaseModel):
             values["annual"] = values["monthly"] * 12
         else:
             raise ValueError("One of 'annual' or 'monthly' must be provided.")
+
+        return values
 
 
 """

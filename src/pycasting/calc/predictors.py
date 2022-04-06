@@ -8,7 +8,7 @@ from typing import Dict, Callable, Optional, List, Tuple, Any, Union
 from clearcut import get_logger
 from pydantic import Field, validator
 
-from pycasting.dataclasses.actuals import Actuals
+from pycasting.pydanticmodels.actuals import Actuals
 from pycasting.misc import UFloat, BaseModel, is_end_of_month, end_of_month
 
 logger = get_logger(__name__)

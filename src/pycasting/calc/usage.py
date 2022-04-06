@@ -1,7 +1,7 @@
 from pycasting.calc.customers import customer_ages
 from pycasting.calc.predictors import predict, PredictorCategory
-from pycasting.dataclasses.actuals import Actuals
-from pycasting.dataclasses.predictions import CustomerType, Scenario
+from pycasting.pydanticmodels.actuals import Actuals
+from pycasting.pydanticmodels.predictions import CustomerType, Scenario
 from pycasting.misc import MonthYear, UFloat
 
 
