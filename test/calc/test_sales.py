@@ -7,11 +7,13 @@ from pycasting.misc import MonthYear
 logger = get_logger(__name__)
 
 
-def test_transitions(salesperson_role, salesperson_hire_predictor, simple_customer_type, initial_lead_stage, close_lead_stage):
+def test_transitions(salesperson_role, salesperson_hire_predictor, simple_customer_type, initial_lead_stage, close_lead_stage, rent):
 
     scenario = Scenario(
         customer_types=(simple_customer_type,),
         headcount=(salesperson_role,),
+        misc_bizdev_expenses=tuple(),
+        misc_expenses=(rent,)
     )
 
     # before hiring salespeople, should be nothing

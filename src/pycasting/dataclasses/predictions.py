@@ -3,9 +3,9 @@ Pydantic data objects used for prediction
 """
 import inspect
 from datetime import timedelta
-from typing import Dict, Union, Tuple
+from typing import Dict, Union, Tuple, Optional
 
-from pydantic import Field, validator, create_model
+from pydantic import Field, validator, create_model, root_validator
 
 from pycasting.calc.predictors import get_predictor_names, PredictorCategory, get_predictor
 from pycasting.misc import UFloat, BaseModel
@@ -25,6 +25,8 @@ class LeadStage(BaseModel):
 
 class LeadConfig(BaseModel):
     stages: Tuple[LeadStage, ...]
+    cost_per_ad_click: float
+    qualified_lead_to_click_ratio: float
 
 
 # dynamically build the possible usage models options
@@ -64,6 +66,7 @@ class CustomerType(BaseModel):
     cogs: "COGS"
     lead_config: LeadConfig
     churn: float = Field(..., le=1, ge=0)
+    payment_months_behind: int = Field(..., ge=0)
 
 
 """
@@ -83,6 +86,11 @@ class Role(BaseModel):
     name: str
     salary: float
     hire_predictor: Union[predictor_pydantic_models[PredictorCategory.headcount]]
+    customer_acquisition: bool
+    
+    @property
+    def monthly_salary(self):
+        return self.salary / 12
 
 
 class SalesRole(Role):
@@ -91,10 +99,11 @@ class SalesRole(Role):
     commission_percent: float = Field(..., ge=0, le=1)
     ramp_up_months: int
     monthly_quota: int
+    customer_acquisition: bool = Field(True, const=True)
 
 
 """
-Details of COGS
+Details of COGS and other spend
 """
 
 
@@ -104,6 +113,26 @@ class COGS(BaseModel):
 
 
 CustomerType.update_forward_refs()
+
+
+class OtherSpend(BaseModel):
+    """Other/misc spend. Includes things like conferences, parties, legal, accounting, insurance, etc."""
+
+    name: str
+    annual: Optional[float] = None
+    monthly: Optional[float] = None
+
+    @root_validator
+    def calculate_other_period(cls, values):
+        if "annual" in values and "monthly" in values:
+            return values
+        elif "annual" in values:
+            values["monthly"] = values["annual"] / 12
+        elif "monthly" in values:
+            values["annual"] = values["monthly"] * 12
+        else:
+            raise ValueError("One of 'annual' or 'monthly' must be provided.")
+
 
 """
 "Top-level" data. Generally provided as json etc. and predictions run based off of it.
@@ -115,6 +144,8 @@ class Scenario(BaseModel):
     customer_types: Tuple[CustomerType, ...]
     headcount: Tuple[Union[SalesRole, Role], ...]
     employee_costs: EmployeeCosts = EmployeeCosts()
+    misc_bizdev_expenses: Tuple[OtherSpend, ...]
+    misc_expenses: Tuple[OtherSpend, ...]
 
     @validator("customer_types")
     def customer_types_add_to_1(cls, v):

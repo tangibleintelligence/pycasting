@@ -3,7 +3,7 @@ Calculation of customers...totals etc.
 """
 from collections import Counter
 from functools import lru_cache
-from typing import Dict
+from typing import Dict, Optional
 
 from pycasting.calc.sales import new_transitions
 from pycasting.dataclasses.actuals import Actuals
@@ -24,8 +24,11 @@ def churned_customers(scenario: Scenario, actuals: Actuals, month_year: MonthYea
 
 
 @lru_cache
-def total_customers(scenario: Scenario, actuals: Actuals, month_year: MonthYear, customer_type: CustomerType) -> int:
+def total_customers(scenario: Scenario, actuals: Actuals, month_year: MonthYear, customer_type: Optional[CustomerType]) -> int:
     """Total customers at end of the given month."""
+    if customer_type is None:
+        return sum(total_customers(scenario, actuals, month_year, ct) for ct in scenario.customer_types)
+
     if month_year < actuals.first_unknown_month_year:
         return actuals.active_customers[customer_type.name]
     else:
