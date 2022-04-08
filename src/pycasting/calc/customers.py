@@ -6,14 +6,16 @@ from functools import lru_cache
 from typing import Dict, Optional
 
 from pycasting.calc.sales import new_transitions
+from pycasting.misc import MonthYear
 from pycasting.pydanticmodels.actuals import Actuals
 from pycasting.pydanticmodels.predictions import Scenario, CustomerType
-from pycasting.misc import MonthYear
 
 
 @lru_cache
-def new_customers(scenario: Scenario, month_year: MonthYear, customer_type: CustomerType) -> int:
+def new_customers(scenario: Scenario, month_year: MonthYear, customer_type: Optional[CustomerType]) -> int:
     """New customers of a given type in a given month"""
+    if customer_type is None:
+        return sum(new_customers(scenario, month_year, ct) for ct in scenario.customer_types)
     return new_transitions(scenario, month_year, None, customer_type)
 
 

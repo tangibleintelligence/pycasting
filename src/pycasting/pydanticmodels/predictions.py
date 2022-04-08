@@ -22,6 +22,13 @@ class LeadStage(BaseModel):
     duration: timedelta
     conversion_rate: float = Field(..., ge=0, le=1)
 
+    @validator("duration", pre=True)
+    def duration_as_days(cls, v):
+        if not isinstance(v, timedelta):
+            return timedelta(days=v)
+        else:
+            return v
+
 
 class LeadConfig(BaseModel):
     stages: Tuple[LeadStage, ...]

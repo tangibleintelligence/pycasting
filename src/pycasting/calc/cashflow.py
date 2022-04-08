@@ -38,7 +38,7 @@ def monthly_revenue(scenario: Scenario, actuals: Actuals, effective_month_year: 
             expected_usage: UFloat = estimate_usage(customer_type, customer_start, effective_month_year)
 
             # Charge them
-            income += expected_usage * customer_type.usage_fee
+            income += expected_usage * customer_type.usage_fee * count
 
         return income
 
