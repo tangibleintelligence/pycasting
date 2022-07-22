@@ -1,19 +1,19 @@
 {
   "customer_types": [
     {
-      "name": "Small - Usage Based",
-      "setup_fee": "8000+/-5000",
+      "name": "Small - Seat Based",
+      "setup_fee": "5000+/-5000",
       "monthly_fee": "0",
-      "usage_fee": 0.05,
+      "usage_fee": 99,
       "usage_predictor": {
         "name": "linear",
-        "increase_per_year": "1+/-0.8",
-        "initial_usage": "20000+/-8000"
+        "increase_per_year": "0.5+/-0.8",
+        "initial_usage": "4+/-3"
       },
-      "fraction_of_leads": 0.8,
+      "fraction_of_leads": 0.9,
       "cogs": {
-        "monthly": "400+/-50",
-        "per_usage": "0.005"
+        "monthly": "120+/-50",
+        "per_usage": "0"
       },
       "lead_config": {
         "stages": [
@@ -34,46 +34,46 @@
           }
         ],
         "cost_per_ad_click": 0.05,
-        "qualified_lead_to_click_ratio": 0.01
+        "qualified_lead_to_click_ratio": 0.05
       },
       "churn": 0.02,
       "payment_months_behind": 0
     },
     {
-      "name": "Large - Usage Based",
+      "name": "Large - Enterprise",
       "setup_fee": "40000+/-10000",
-      "monthly_fee": "0",
-      "usage_fee": 0.03,
+      "monthly_fee": "4000",
+      "usage_fee": 0,
       "usage_predictor": {
-        "name": "linear",
-        "increase_per_year": "1+/-0.2",
-        "initial_usage": "150000+/-100000"
+        "name": "constant",
+        "increase_per_year": "0",
+        "initial_usage": "0"
       },
-      "fraction_of_leads": 0.2,
+      "fraction_of_leads": 0.1,
       "cogs": {
-        "monthly": "800+/-50",
+        "monthly": "150+/-50",
         "per_usage": "0.005"
       },
       "lead_config": {
         "stages": [
           {
             "name": "lead",
-            "duration": 10,
+            "duration": 15,
             "conversion_rate": 0.1
           },
           {
             "name": "demo",
-            "duration": 5,
-            "conversion_rate": 0.5
+            "duration": 25,
+            "conversion_rate": 0.1
           },
           {
             "name": "trial",
             "duration": 35,
-            "conversion_rate": 0.3
+            "conversion_rate": 0.2
           }
         ],
         "cost_per_ad_click": 0.20,
-        "qualified_lead_to_click_ratio": 0.05
+        "qualified_lead_to_click_ratio": 0.01
       },
       "churn": 0.01,
       "payment_months_behind": 1
@@ -82,7 +82,7 @@
   "headcount": [
     {
       "name": "Leadership",
-      "salary": 70000,
+      "salary": 40000,
       "hire_predictor": {
         "name": "constant",
         "count": 3
@@ -95,36 +95,31 @@
         "name": "linear_with_max",
         "initial_count": 1,
         "hires_per_year": 1,
-        "first_hire_date": "2022-09-01",
+        "first_hire_date": "2022-10-01",
         "max_hires": 2
       },
       "customer_acquisition": true
     },
     {
-      "name": "Lead Developer",
+      "name": "Lead UI Developer",
       "salary": 120000,
       "hire_predictor": {
         "name": "linear_with_max",
         "initial_count": 1,
         "hires_per_year": 1,
-        "first_hire_date": "2022-10-01",
-        "max_hires": 3
+        "first_hire_date": "2022-11-01",
+        "max_hires": 2
       }
     },
     {
       "name": "Integration Developer",
       "salary": 100000,
       "hire_predictor": {
-        "name": "scale_with_customers",
-        "customers_per_person": 5
-      }
-    },
-    {
-      "name": "CSR",
-      "salary": 70000,
-      "hire_predictor": {
-        "name": "scale_with_customers",
-        "customers_per_person": 10
+        "name": "linear_with_max",
+        "initial_count": 1,
+        "hires_per_year": 1,
+        "first_hire_date": "2023-02-01",
+        "max_hires": 2
       }
     },
     {
@@ -132,12 +127,12 @@
       "salary": 45000,
       "commission_percent": 0.05,
       "ramp_up_months": 4,
-      "monthly_quota": 30,
+      "monthly_quota": 250,
       "hire_predictor": {
         "name": "linear_with_max",
-        "initial_count": 3,
-        "first_hire_date": "2022-06-01",
-        "hires_per_year": 10,
+        "initial_count": 1,
+        "first_hire_date": "2022-09-01",
+        "hires_per_year": 4,
         "max_hires": 30
       },
       "customer_acquisition": true
@@ -157,5 +152,10 @@
       "monthly": 1100
     }
   ],
-  "misc_bizdev_expenses": []
+  "misc_bizdev_expenses": [
+    {
+      "name": "Tools",
+      "monthly": 400
+    }
+  ]
 }

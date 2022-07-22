@@ -8,6 +8,7 @@ from pathlib import Path
 import altair as alt
 import streamlit as st
 import typer
+from frozendict import frozendict
 from numerize.numerize import numerize
 
 from pycasting.calc.cashflow import monthly_revenue, monthly_expenses
@@ -22,7 +23,7 @@ cli = typer.Typer()
 @cli.command()
 def main(scenario: Path, months_ahead: int = 18):
     # TODO read actuals
-    actuals = Actuals(cash_on_hand=200_000)
+    actuals = Actuals(cash_on_hand=210_000, active_customers=frozendict({"Small - Seat Based": 1}))
 
     # Read Scenario
     with open(scenario, "r") as f:
